@@ -3,6 +3,7 @@ package com.fokot.createimports;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jdt.core.ICompilationUnit;
@@ -46,13 +47,12 @@ import org.eclipse.ui.IActionDelegate;
  */
 public class CreateSingleSourceFileOperation  {
 
-	private final String JAVA_LANG_PACKAGE = String.class.getPackage().getName();
+	private static final Pattern JAVA_LANG_CLASS = Pattern.compile("java\\.lang\\.[^\\.]*");
 
 	/**
 	 * Processed java project
 	 */
 	private IJavaProject javaProject;
-
 
 	/**
 	 * Processed java source file
@@ -60,6 +60,7 @@ public class CreateSingleSourceFileOperation  {
 	private ICompilationUnit compilationUnit;
 
 	/**
+	 *
 	 * AST Root of processed java source file
 	 */
 	private CompilationUnit astRoot;
@@ -92,8 +93,10 @@ public class CreateSingleSourceFileOperation  {
 		// if comes to no ambiguity for qualified type name, turns it into simple name and adds an import
 		simplifyQualifiedNames(allSingleImports, visitor.qualifiedTypeNames, astRewrite);
 
+		NullProgressMonitor npm = new NullProgressMonitor();
 		TextEdit edit = astRewrite.rewriteAST();
-		compilationUnit.applyTextEdit(edit, new NullProgressMonitor());
+		compilationUnit.applyTextEdit(edit, npm);
+		compilationUnit.save(npm, true);
 	}
 
 	private boolean isClassInThisPackage(String className) throws JavaModelException {
@@ -150,7 +153,7 @@ public class CreateSingleSourceFileOperation  {
 			else if( !newSingleImportSimpleNames.contains(simpleName) && !singleImportSimpleNames.contains(simpleName)){
 
 				// java.lang package are by default imported
-				if(qn.getFullyQualifiedName().startsWith(JAVA_LANG_PACKAGE)){
+				if(isInJavaLangPackage(qn)){
 					// if there is class that can collide - keep qualified name
 					if ( isClassInThisPackage(qn.getName().getIdentifier()) ){
 						continue;
@@ -306,8 +309,8 @@ public class CreateSingleSourceFileOperation  {
 					continue;
 				}
 
-				// java.lang package are by default imported
-				if(qn.getFullyQualifiedName().startsWith(JAVA_LANG_PACKAGE)){
+				// java.lang package is by default imported - so it can be removed even when it is used
+				if(isInJavaLangPackage(qn)){
 					// if there is no class it can collide
 					if (! isClassInThisPackage(qn.getName().getIdentifier()) ){
 						astRewrite.remove(singleImport, null);
@@ -319,6 +322,10 @@ public class CreateSingleSourceFileOperation  {
 		}
 
 		return res;
+	}
+
+	private boolean isInJavaLangPackage(QualifiedName qn){
+		return JAVA_LANG_CLASS.matcher(qn.getFullyQualifiedName()).matches();
 	}
 
 	/**

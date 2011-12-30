@@ -65,9 +65,18 @@ class ImportsAndTypesVisitor extends ASTVisitor {
 	};
 
 	public boolean visit(QualifiedName node) {
-		// we are not interested in other names, e.g. variable names.., just types
-		if(node.resolveBinding().getKind() == IBinding.TYPE){
+
+		IBinding binding = node.resolveBinding();
+
+		// we are interested in types bindings
+		if(binding.getKind() == IBinding.TYPE){
 			qualifiedTypeNames.add(node);
+		}
+		// variable binding are also interesting,
+		// e.g. @GeneratedValue(strategy = GenerationType.AUTO)
+		// GenerationType.AUTO is variable binding
+		if(binding.getKind() == IBinding.VARIABLE){
+			return true;
 		}
 		return false;
 	};

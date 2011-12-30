@@ -1,12 +1,47 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.4"?>
 <plugin>
-	<extension point="org.eclipse.ui.popupMenus">
-		<objectContribution id="CreateImports.contribution1" objectClass="org.eclipse.jdt.core.ICompilationUnit">
-			<menu id="CreateImports.menu1" label="Create Imports" path="additions">
-				<separator name="group1"></separator>
-			</menu>
-			<action class="com.fokot.createimports.ZasranaAction" enablesFor="1" id="CreateImports.newAction" label="CreateImports" menubarPath="CreateImports.menu1/group1"></action>
-		</objectContribution>
-	</extension>
+   <extension point="org.eclipse.ui.popupMenus">
+      <objectContribution
+            id="CreateImports.contribution1"
+            objectClass="org.eclipse.jdt.core.IJavaProject">
+         <action
+               class="com.fokot.createimports.CreateImportsAction"
+               label="CreateImports"
+               menubarPath="org.eclipse.jdt.ui.source.menu/importGroup"
+               id="CreateImports">
+         </action>
+      </objectContribution>
+      <objectContribution
+            id="CreateImports.contribution1"
+            objectClass="org.eclipse.jdt.core.IPackageFragmentRoot">
+         <action
+               class="com.fokot.createimports.CreateImportsAction"
+               label="CreateImports"
+               menubarPath="org.eclipse.jdt.ui.source.menu/importGroup"
+               id="CreateImports">
+         </action>
+      </objectContribution>
+      <objectContribution
+            id="CreateImports.contribution1"
+            objectClass="org.eclipse.jdt.core.IPackageFragment">
+         <action
+               class="com.fokot.createimports.CreateImportsAction"
+               label="CreateImports"
+               menubarPath="org.eclipse.jdt.ui.source.menu/importGroup"
+               id="CreateImports">
+         </action>
+      </objectContribution>
+      <objectContribution
+            id="CreateImports.contribution1"
+            objectClass="org.eclipse.jdt.core.ICompilationUnit">
+         <action
+               class="com.fokot.createimports.CreateImportsAction"
+               label="CreateImports"
+               menubarPath="org.eclipse.jdt.ui.source.menu/importGroup"
+               id="CreateImports">
+         </action>
+      </objectContribution>
+   </extension>
+
 </plugin>
