@@ -27,7 +27,6 @@ import org.eclipse.jdt.ui.SharedASTProvider;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.text.edits.TextEdit;
-import org.eclipse.ui.IActionDelegate;
 
 /**
  * Create imports in single Java source file
