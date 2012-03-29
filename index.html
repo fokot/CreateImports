@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset='utf-8'>
+
+  <title>fokot/CreateImports @ GitHub</title>
+
+  <style type="text/css">
+    body {
+      margin-top: 1.0em;
+      background-color: #5f0348;
+      font-family: Helvetica, Arial, FreeSans, san-serif;
+      color: #ffffff;
+    }
+    #container {
+      margin: 0 auto;
+      width: 700px;
+    }
+    h1 { font-size: 3.8em; color: #a0fcb7; margin-bottom: 3px; }
+    h1 .small { font-size: 0.4em; }
+    h1 a { text-decoration: none }
+    h2 { font-size: 1.5em; color: #a0fcb7; }
+    h3 { text-align: center; color: #a0fcb7; }
+    a { color: #a0fcb7; }
+    .description { font-size: 1.2em; margin-bottom: 30px; margin-top: 30px; font-style: italic;}
+    .download { float: right; }
+    pre { background: #000; color: #fff; padding: 15px;}
+    hr { border: 0; width: 80%; border-bottom: 1px solid #aaa}
+    .footer { text-align:center; padding-top:30px; font-style: italic; }
+  </style>
+</head>
+
+<body>
+  <a href="https://github.com/fokot/CreateImports"><img style="position: absolute; top: 0; right: 0; border: 0;" src="http://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub" /></a>
+
+  <div id="container">
+
+    <div class="download">
+      <a href="https://github.com/fokot/CreateImports/zipball/master">
+        <img border="0" width="90" src="https://github.com/images/modules/download/zip.png"></a>
+      <a href="https://github.com/fokot/CreateImports/tarball/master">
+        <img border="0" width="90" src="https://github.com/images/modules/download/tar.png"></a>
+    </div>
+
+    <h1><a href="https://github.com/fokot/CreateImports">CreateImports</a>
+      <span class="small">by <a href="https://github.com/fokot">fokot</a></span></h1>
+
+    <div class="description">
+      Eclipse plugin that takes a java project and replaces fullyqualified names by an import and simple name. Replacement for hybridlabs-beautifier.
+    </div>
+
+    
+      <p>Useful when generating java sources. You can generate full java names e.g. com.fokot.CreateImports so no collisions arise.
+        After generation you can use this plugin to simplify fully qualified names and create imports for it.
+		It takes java source files in Eclipse, and simplifies the fully qualified names if possible. We use in our own plugin which generates code.</p>
+
+	<p>There project which does the same called hybridlabs-beautifier,
+	   but it has many dependecies and skips the files which have a wildcard import in them e.g. import com.fokot.*.
+	   And we even create imports for static method calls.</p>
+
+
+This is file before CreatImports was run
+{% highlight ruby %}
+// will be replaced by simple import - used
+import java.math.*;
+
+// will be replaced by simple import - used
+import java.io.*;
+
+// will be replaced by simple import - used
+import java.util.*;
+
+// will be kept - used
+import java.util.Collection;
+
+// generic parameter and superclass will be simplified
+public class CreateImportsTestClass<T extends java.io.InputStream> extends java.io.BufferedInputStream {
+
+
+	// will be fixed
+	private java.util.Collection c;
+
+	// will be fixed
+	private Collection<java.io.InputStream> cc;
+
+	public CreateImportsTestClass(InputStream in) {
+		super(in);
+
+		BigDecimal db = null;
+
+		// will be fixed
+		java.math.BigDecimal db2 = null;
+
+		// will be kept - no fixing needed
+		OutputStream os = null;
+
+		// will be kept - source contains java.math.BigDecimal
+		com.fokot.createimports.test.bd.BigDecimal.class.getClass();
+
+		// will be kept - no fixing needed
+		ArrayList<String> o = null;
+
+		// will be kept and no import will be created because is from java.lang package
+		Long l = new Long(5);
+
+		// will be fixed - all Map interface, generic parameter and HashMap
+		java.util.Map<String, java.lang.Long> s = new java.util.HashMap<String, Long>();
+
+		// will be fixed - no import created because it is from java.lang.package
+		java.lang.String str;
+
+		// will be kept - because there is integer in this package
+		java.lang.Integer i;
+
+		// will be fixed
+		java.util.Arrays.deepHashCode(null);
+	}
+
+	// will be fixed
+	protected void haluza(java.io.BufferedInputStream i){
+	}
+}
+{% endhighlight %}
+
+And this is how it looks after
+<pre class="brush:java">
+//will be kept - used
+import java.util.Collection;
+
+import java.io.InputStream;
+import java.math.BigDecimal;
+import java.io.OutputStream;
+import java.util.ArrayList;
+import java.io.BufferedInputStream;
+import java.util.Map;
+import java.util.HashMap;
+import java.util.Arrays;
+
+//generic parameter and superclass will be simplified
+public class CreateImportsTestClassAfterFix<T extends InputStream> extends BufferedInputStream {
+
+
+	// will be fixed
+	private Collection c;
+
+	// will be fixed
+	private Collection<InputStream> cc;
+
+	public CreateImportsTestClassAfterFix(InputStream in) {
+		super(in);
+
+		BigDecimal db = null;
+
+		// will be fixed
+		BigDecimal db2 = null;
+
+		// will be kept - no fixing needed
+		OutputStream os = null;
+
+		// will be kept - source contains java.math.BigDecimal
+		com.fokot.createimports.test.bd.BigDecimal.class.getClass();
+
+		// will be kept - no fixing needed
+		ArrayList<String> o = null;
+
+		// will be kept and no import will be created because is from java.lang package
+		Long l = new Long(5);
+
+		// will be fixed - all Map interface, generic parameter and HashMap
+		Map<String, Long> s = new HashMap<String, Long>();
+
+		// will be fixed - no import created because it is from java.lang.package
+		String str;
+
+		// will be kept - because there is integer in this package
+		java.lang.Integer i;
+
+		// will be fixed
+		Arrays.deepHashCode(null);
+	}
+
+	// will be fixed
+	protected void haluza(BufferedInputStream i){
+	}
+}
+</pre>
+</p>
+
+
+
+      <h2>Install</h2>
+      <p>Copy into eclipse/plugins directory or use as a jar in your project.</p>
+
+To run CreateImprotsActrionOn you sources do following:
+<pre class="brush:java">CreateImportsOperation ci = new CreateImportsOperation(javaElement);
+ci.execute(progressMonitor);</pre></p>
+    
+
+    
+
+    
+
+    
+
+    
+      <h2>Authors</h2>
+      <p>Frantisek Kocun (frantisek.kocun@gmail.com)<br/>      </p>
+    
+
+    
+      <h2>Contact</h2>
+      <p>fokot (frantisek.kocun@gmail.com)<br/>      </p>
+    
+
+    <h2>Download</h2>
+    <p>
+      You can download this project in either
+      <a href="https://github.com/fokot/CreateImports/zipball/master">zip</a> or
+      <a href="https://github.com/fokot/CreateImports/tarball/master">tar formats.
+    </p>
+    <p>You can also clone the project with <a href="http://git-scm.com">Git</a>
+      by running:
+      <pre>$ git clone git://github.com/fokot/CreateImports</pre>
+    </p>
+
+    <div class="footer">
+      get the source code on GitHub : <a href="https://github.com/fokot/CreateImports">fokot/CreateImports</a>
+    </div>
+
+  </div>
+
+</body>
+</html>
