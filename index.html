@@ -36,6 +36,7 @@ title: Blogging Like a Hacker
   </style>
 
 <link href="http://pygments.org/media/pygments_style.css" rel="stylesheet" type="text/css" />
+<link href="http://pygments.org/media/style.css" rel="stylesheet" type="text/css" />
 
 
 </head>
@@ -133,7 +134,7 @@ public class CreateImportsTestClass<T extends java.io.InputStream> extends java.
 {% endhighlight %}
 
 And this is how it looks after
-<pre class="brush:java">
+{% highlight java %}
 //will be kept - used
 import java.util.Collection;
 
@@ -193,7 +194,7 @@ public class CreateImportsTestClassAfterFix<T extends InputStream> extends Buffe
 	protected void haluza(BufferedInputStream i){
 	}
 }
-</pre>
+{% endhighlight %}
 </p>
 
 
@@ -202,14 +203,11 @@ public class CreateImportsTestClassAfterFix<T extends InputStream> extends Buffe
       <p>Copy into eclipse/plugins directory or use as a jar in your project.</p>
 
 To run CreateImprotsActrionOn you sources do following:
-<pre class="brush:java">CreateImportsOperation ci = new CreateImportsOperation(javaElement);
-ci.execute(progressMonitor);</pre></p>
-    
-
-    
-
-    
-
+{% highlight java %}
+CreateImportsOperation ci = new CreateImportsOperation(javaElement);
+ci.execute(progressMonitor);
+{% endhighlight %}
+</p>
     
 
     
